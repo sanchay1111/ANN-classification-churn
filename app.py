@@ -56,9 +56,11 @@ input_data = pd.DataFrame({
     'EstimatedSalary': [estimated_salary]
 })
 
-geo_encoded=OneHotEncoder.transform([[geography]]).toarray()
-geo_encoded_df=pd.DataFrame(geo_encoded, columns=label_encoder_geo.get_feature_name_out)
-
+geo_encoded = label_encoder_geo.transform([[geography]]).toarray()
+geo_encoded_df = pd.DataFrame(
+    geo_encoded,
+    columns=label_encoder_geo.get_feature_names_out(['Geography'])
+)
 ## combine one hot and colimn with input data
 
 input_data=pd.concat([input_data.reset_index(drop=True),geo_encoded_df], axis=1)
@@ -66,10 +68,13 @@ input_data=pd.concat([input_data.reset_index(drop=True),geo_encoded_df], axis=1)
 
 ## scale input data
 
-input_data_scaled=scaler.transfrom(input_data)
+input_data_scaled = scaler.transform(input_data)
+
 # Predict churn
 prediction = model.predict(input_data_scaled)
 prediction_proba = prediction[0][0]
+
+st.write(f'churn probability:{prediction_proba:.2f}')
 
 if prediction_proba > 0.5:
     st.write('The customer is likely to churn.')
