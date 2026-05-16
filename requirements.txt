@@ -1,6 +1,6 @@
+tensorflow==2.15.0
 streamlit
 pandas
 numpy
 scikit-learn
-tensorflow-nightly
 pickle-mixin
