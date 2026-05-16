@@ -21,7 +21,7 @@ with open('scaler.pkl', 'rb') as file:
 # Streamlit app
 st.title('Customer Churn Prediction')
 
-# User inputs
+# User Inputs
 geography = st.selectbox(
     'Geography',
     label_encoder_geo.categories_[0]
@@ -55,7 +55,12 @@ estimated_salary = st.slider(
     50000.0
 )
 
-tenure = st.slider('Tenure', 0, 10, 5)
+tenure = st.slider(
+    'Tenure',
+    0,
+    10,
+    5
+)
 
 num_of_products = st.slider(
     'Number of Products',
@@ -74,7 +79,7 @@ is_active_member = st.selectbox(
     [0, 1]
 )
 
-# Prepare input data
+# Prepare Input Data
 input_data = pd.DataFrame({
     'CreditScore': [credit_score],
     'Gender': [label_encoder_gender.transform([gender])[0]],
@@ -87,35 +92,36 @@ input_data = pd.DataFrame({
     'EstimatedSalary': [estimated_salary]
 })
 
-# One-hot encode Geography
+# One Hot Encode Geography
 geo_encoded = label_encoder_geo.transform([[geography]]).toarray()
 
+# IMPORTANT FIX
 geo_encoded_df = pd.DataFrame(
     geo_encoded,
-    columns=label_encoder_geo.get_feature_names_out(['Geography'])
+    columns=label_encoder_geo.get_feature_names_out(['Geo'])
 )
 
-# Combine one-hot encoded columns with input data
+# Combine encoded geography columns
 input_data = pd.concat(
     [input_data.reset_index(drop=True), geo_encoded_df],
     axis=1
 )
 
-# Match column order with training data
+# Reorder columns exactly like training data
 input_data = input_data[scaler.feature_names_in_]
 
-# Scale input data
+# Scale Input Data
 input_data_scaled = scaler.transform(input_data)
 
-# Predict churn
+# Prediction
 prediction = model.predict(input_data_scaled)
 
 prediction_proba = prediction[0][0]
 
-# Display prediction probability
+# Display probability
 st.write(f'Churn Probability: {prediction_proba:.2f}')
 
-# Display result
+# Final Result
 if prediction_proba > 0.5:
     st.write('The customer is likely to churn.')
 else:
