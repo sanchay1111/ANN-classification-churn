@@ -1,6 +1,6 @@
-tensorflow-cpu==2.16.1
 streamlit
 pandas
 numpy
 scikit-learn
+tensorflow-nightly
 pickle-mixin
